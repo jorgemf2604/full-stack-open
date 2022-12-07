@@ -1,16 +1,23 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Filter from './components/Filter'
 import Form from './components/Form'
 import Contacts from './components/Contacts'
+import axios from 'axios'
 
 const App = () => {
   // state
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', key: 1, telephone: "07567345672"}
-  ]) 
+  const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [telephone, setTelephone] = useState("")
   const [term, setTerm] = useState("")
+
+  // fetch data (side effect)
+  useEffect(() => {
+    axios.get("http://localhost:3001/persons")
+    .then(response => {
+      setPersons(response.data)
+    })
+  }, [])
 
   // event handler
   const addNote = (e) => {
@@ -18,8 +25,8 @@ const App = () => {
     if (persons.every(person => person.name !== newName.trim())) {
       const newPerson = {
         name:newName,
-        key: persons.length + 1,
-        telephone: telephone
+        id: persons.length + 1,
+        number: telephone
       }
       setPersons(persons.concat(newPerson))
       setNewName("")
